@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İzlediklerim - Maravelle</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <!-- QR Code library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+</head>
+<body>
+    <header class="main-header">
+        <div class="container header-container">
+            <div class="logo">
+                <h1>MARAVELLE</h1>
+            </div>
+            <nav class="main-nav">
+                <ul class="nav-links">
+                    <li class="nav-item"><a href="index.html">Ana Sayfa</a></li>
+                    <li class="nav-item"><a href="movies.html">Filmler</a></li>
+                    <li class="nav-item"><a href="series.html">Diziler</a></li>
+                    <li class="nav-item"><a href="watched.html" class="active">İzlediklerim</a></li>
+                </ul>
+            </nav>
+            <div class="user-menu">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="İzlediklerimde ara...">
+                    <button id="searchButton"><i class="fas fa-search"></i></button>
+                </div>
+                <button id="darkModeToggle" class="btn btn-icon" aria-label="Gece/Gündüz Modu" onclick="toggleTheme()">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <a href="#" class="btn btn-subscribe" id="loginBtn">Giriş Yap</a>
+                <div id="userProfileContainer" style="display:none;">
+                    <a href="#" class="user-profile">
+                        <i class="fas fa-user-circle"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="watched-container container">
+        <div class="page-header">
+            <h1 class="page-title">İzlediklerim</h1>
+            <div class="filter-controls">
+                <button class="filter-btn active" data-filter="all">Tümü</button>
+                <button class="filter-btn" data-filter="movie">Filmler</button>
+                <button class="filter-btn" data-filter="series">Diziler</button>
+                <select id="sortSelect" class="sort-select">
+                    <option value="date-desc">Tarihe Göre (Yeni-Eski)</option>
+                    <option value="date-asc">Tarihe Göre (Eski-Yeni)</option>
+                    <option value="rating-desc">Puana Göre (Yüksek-Düşük)</option>
+                    <option value="rating-asc">Puana Göre (Düşük-Yüksek)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="watched-stats">
+            <div class="stat-item">
+                <span class="stat-value" id="totalWatched">0</span>
+                <span class="stat-label">Toplam İzlenen</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="totalMovies">0</span>
+                <span class="stat-label">Film</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="totalSeries">0</span>
+                <span class="stat-label">Dizi</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="avgRating">0.0</span>
+                <span class="stat-label">Ortalama Puan</span>
+            </div>
+        </div>
+
+        <div class="content-grid" id="watchedGrid">
+            <!-- İçerik JavaScript ile eklenecek -->
+            <div class="empty-state" id="emptyWatchedState">
+                <i class="fas fa-film fa-3x"></i>
+                <h2>Henüz izlediğiniz içerik yok</h2>
+                <p>İzlediğiniz film ve dizileri eklemek için içerik sayfalarını ziyaret edin ve "İzlediklerime Ekle" butonuna tıklayın.</p>
+                <a href="index.html" class="btn btn-primary">Ana Sayfaya Dön</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Detay Modal -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content detail-modal">
+            <span class="close">&times;</span>
+            <div id="qrCodeContainer" class="qr-code-container" style="display: none;">
+                <h3>QR Kod Önerisi</h3>
+                <div id="qrcode"></div>
+                <p id="qrDescription" class="qr-description"></p>
+                <button id="closeQrCode" class="btn btn-secondary">Kapat</button>
+            </div>
+            <div id="detailContent"></div>
+            <div class="detail-actions">
+                <button id="generateRecommendationQR" class="btn btn-primary"><i class="fas fa-qrcode"></i> QR Kod Önerisi Oluştur</button>
+                <button id="removeFromWatched" class="btn btn-danger"><i class="fas fa-trash"></i> İzlediklerimden Çıkar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content auth-modal">
+            <span class="close" id="closeLoginModal">&times;</span>
+            <div class="auth-container">
+                <div class="auth-header">
+                    <div class="auth-tabs">
+                        <button class="auth-tab active" data-tab="login">Giriş Yap</button>
+                        <button class="auth-tab" data-tab="register">Kayıt Ol</button>
+                    </div>
+                </div>
+                <div class="auth-body">
+                    <div class="auth-form active" id="loginForm">
+                        <div class="form-group">
+                            <label for="loginEmail">E-posta</label>
+                            <input type="email" id="loginEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword">Şifre</label>
+                            <input type="password" id="loginPassword" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" id="loginSubmitBtn" class="btn btn-primary">Giriş Yap</button>
+                        </div>
+                    </div>
+                    <div class="auth-form" id="registerForm">
+                        <div class="form-group">
+                            <label for="registerEmail">E-posta</label>
+                            <input type="email" id="registerEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPassword">Şifre</label>
+                            <input type="password" id="registerPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPasswordConfirm">Şifre Tekrar</label>
+                            <input type="password" id="registerPasswordConfirm" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" id="registerSubmitBtn" class="btn btn-primary">Kayıt Ol</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>MARAVELLE</h2>
+                    <p>Film ve Dizi Platformu</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-links-column">
+                        <h3>Platformumuz</h3>
+                        <ul>
+                            <li><a href="index.html">Ana Sayfa</a></li>
+                            <li><a href="movies.html">Filmler</a></li>
+                            <li><a href="series.html">Diziler</a></li>
+                            <li><a href="watched.html">İzlediklerim</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-links-column">
+                        <h3>Destek</h3>
+                        <ul>
+                            <li><a href="#">Yardım Merkezi</a></li>
+                            <li><a href="#">Sıkça Sorulan Sorular</a></li>
+                            <li><a href="#">İletişim</a></li>
+                            <li><a href="#">Gizlilik Politikası</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-social">
+                    <h3>Bizi Takip Edin</h3>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Maravelle. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="db.js"></script>
+    <script src="watched.js"></script>
+</body>
+</html>

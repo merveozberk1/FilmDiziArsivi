@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maravelle - Filmler</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" />
+            <div class="slider round"></div>
+        </label>
+        <em>Koyu Mod</em>
+    </div>
+    
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <h1>MARAVELLE</h1>
+            </div>
+            <nav class="main-nav">
+                <ul class="nav-links">
+                    <li class="nav-item"><a href="index.html">Ana Sayfa</a></li>
+                    <li class="nav-item"><a href="movies.html" class="active">Filmler</a></li>
+                    <li class="nav-item"><a href="series.html">Diziler</a></li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="dropdown-toggle">Kategoriler</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#" data-category="drama">Dram</a></li>
+                            <li><a href="#" data-category="comedy">Komedi</a></li>
+                            <li><a href="#" data-category="action">Aksiyon</a></li>
+                            <li><a href="#" data-category="scifi">Bilim Kurgu</a></li>
+                            <li><a href="#" data-category="animation">Animasyon</a></li>
+                            <li><a href="#" data-category="horror">Korku</a></li>
+                            <li><a href="#" data-category="romance">Romantik</a></li>
+                            <li><a href="#" data-category="thriller">Gerilim</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+            <div class="header-right">
+                <div class="user-lists">
+                    <a href="#" class="btn btn-list" id="watchlistBtn">
+                        <i class="fas fa-list"></i> İzleme Listem
+                    </a>
+                    <a href="#" class="btn btn-list" id="watchedBtn">
+                        <i class="fas fa-check-circle"></i> İzlediklerim
+                    </a>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Film, dizi veya aktör ara...">
+                    <button id="searchButton"><i class="fas fa-search"></i></button>
+                </div>
+                <button id="darkModeToggle" class="btn btn-icon" aria-label="Gece/Gündüz Modu">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <a href="#" class="btn btn-subscribe" id="loginBtn">Giriş Yap</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="section-title">
+            <h2>Filmler</h2>
+        </section>
+
+        <section class="content-grid" id="movieGrid">
+            <!-- Movies will be loaded here by JavaScript -->
+            <div class="loading-animation" id="loadingAnimation">
+                <div class="spinner"></div>
+                <p>Filmler yükleniyor...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <div class="footer-column">
+                <h3>Maravelle</h3>
+                <ul>
+                    <li><a href="#">Hakkımızda</a></li>
+                    <li><a href="#">Kariyer</a></li>
+                    <li><a href="#">İletişim</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Yardım</h3>
+                <ul>
+                    <li><a href="#">SSS</a></li>
+                    <li><a href="#">Cihaz Desteği</a></li>
+                    <li><a href="#">Hesap</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Yasal</h3>
+                <ul>
+                    <li><a href="#">Gizlilik Politikası</a></li>
+                    <li><a href="#">Kullanım Şartları</a></li>
+                    <li><a href="#">Çerez Politikası</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2023 Maravelle. Tüm hakları saklıdır.</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Giriş Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content auth-modal">
+            <span class="close" id="closeLoginModal">&times;</span>
+            <div class="auth-container">
+                <div class="auth-header">
+                    <div class="auth-tabs">
+                        <button class="auth-tab active" data-tab="login">Giriş Yap</button>
+                        <button class="auth-tab" data-tab="register">Kayıt Ol</button>
+                    </div>
+                </div>
+                
+                <div class="auth-body">
+                    <!-- Giriş Formu -->
+                    <form id="loginForm" class="auth-form active">
+                        <div class="imgcontainer">
+                            <img src="https://via.placeholder.com/150x150/304ffe/ffffff?text=M" alt="Avatar" class="avatar">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="loginEmail">E-posta</label>
+                            <input type="email" id="loginEmail" placeholder="E-posta adresiniz" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="loginPassword">Şifre</label>
+                            <input type="password" id="loginPassword" placeholder="Şifreniz" required>
+                        </div>
+                        
+                        <div class="form-group remember-me">
+                            <label>
+                                <input type="checkbox" id="rememberMe"> Beni Hatırla
+                            </label>
+                            <a href="#" class="forgot-password">Şifremi Unuttum</a>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="auth-button">Giriş Yap</button>
+                        </div>
+                        
+                        <div class="social-login">
+                            <p>veya şununla giriş yap:</p>
+                            <div class="social-buttons">
+                                <button type="button" class="social-button google"><i class="fab fa-google"></i> Google</button>
+                                <button type="button" class="social-button facebook"><i class="fab fa-facebook-f"></i> Facebook</button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <!-- Kayıt Formu -->
+                    <form id="registerForm" class="auth-form">
+                        <div class="imgcontainer">
+                            <img src="https://via.placeholder.com/150x150/673ab7/ffffff?text=M" alt="Avatar" class="avatar">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="registerName">Ad Soyad</label>
+                            <input type="text" id="registerName" placeholder="Ad ve soyadınız" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="registerEmail">E-posta</label>
+                            <input type="email" id="registerEmail" placeholder="E-posta adresiniz" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="registerPassword">Şifre</label>
+                            <input type="password" id="registerPassword" placeholder="Şifreniz" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="registerPasswordConfirm">Şifre Tekrar</label>
+                            <input type="password" id="registerPasswordConfirm" placeholder="Şifrenizi tekrar girin" required>
+                        </div>
+                        
+                        <div class="form-group terms">
+                            <label>
+                                <input type="checkbox" id="termsAgree" required> <a href="#">Kullanım Koşulları</a>'nı ve <a href="#">Gizlilik Politikası</a>'nı kabul ediyorum
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="auth-button">Kayıt Ol</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="app.js"></script>
+    <script src="movies.js"></script>
+</body>
+</html> 

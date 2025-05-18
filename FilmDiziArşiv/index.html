@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maravelle - Film ve Dizi Platformu</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <!-- QR Code library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+</head>
+<body>
+    <header class="main-header">
+        <div class="container header-container">
+            <div class="logo">
+                <h1>MARAVELLE</h1>
+            </div>
+            <nav class="main-nav">
+                <ul class="nav-links">
+                    <li class="nav-item"><a href="index.html" class="active">Ana Sayfa</a></li>
+                    <li class="nav-item"><a href="movies.html">Filmler</a></li>
+                    <li class="nav-item"><a href="series.html">Diziler</a></li>
+                    <li class="nav-item"><a href="watched.html">İzlediklerim</a></li>
+                </ul>
+            </nav>
+            <div class="user-menu">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Film, dizi, karakter ara...">
+                    <button id="searchButton"><i class="fas fa-search"></i></button>
+                </div>
+                <button id="darkModeToggle" class="btn btn-icon" aria-label="Gece/Gündüz Modu" onclick="toggleDarkMode()">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <a href="#" class="btn btn-subscribe" id="loginBtn">Giriş Yap</a>
+                <div id="userProfileContainer" style="display:none;">
+                    <a href="#" class="user-profile">
+                        <i class="fas fa-user-circle"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero-section">
+        <div class="hero-slider" id="heroSlider">
+            <div class="slide active">
+                <div class="slide-content">
+                    <h2 class="slide-category">YENİ YILDIZ</h2>
+                    <h1 class="slide-title">Uzayın Ötesinde</h1>
+                    <p class="slide-desc">Genç astronot Alex'in, evrenin sırlarını keşfettiği ve beklenmedik dostluklarla dolu yolculuğu.</p>
+                    <div class="slide-buttons">
+                        <a href="#" class="btn btn-play"><i class="fas fa-play"></i> Oynat</a>
+                        <a href="#" class="btn btn-info"><i class="fas fa-info-circle"></i> Detaylar</a>
+                    </div>
+                </div>
+                <div class="slide-image">
+                    <img src="https://via.placeholder.com/1200x600/0A1D3F/ffffff?text=Uzayın+Ötesinde" alt="Uzayın Ötesinde">
+                </div>
+            </div>
+            <div class="slide">
+                <div class="slide-content">
+                    <h2 class="slide-category">POPÜLER DİZİ</h2>
+                    <h1 class="slide-title">Karanlık Sular</h1>
+                    <p class="slide-desc">Okyanusun derinliklerindeki gizli bir laboratuvarda yaşanan gizemli olaylar ve mücadeleler.</p>
+                    <div class="slide-buttons">
+                        <a href="#" class="btn btn-play"><i class="fas fa-play"></i> Oynat</a>
+                        <a href="#" class="btn btn-info"><i class="fas fa-info-circle"></i> Detaylar</a>
+                    </div>
+                </div>
+                <div class="slide-image">
+                    <img src="https://via.placeholder.com/1200x600/051425/ffffff?text=Karanlık+Sular" alt="Karanlık Sular">
+                </div>
+            </div>
+            <div class="slide">
+                <div class="slide-content">
+                    <h2 class="slide-category">YENİ FİLM</h2>
+                    <h1 class="slide-title">Zamanın İzinde</h1>
+                    <p class="slide-desc">Genç bir tarihçinin, geçmişte kaybolan değerli bir eserin peşinde başlayan macera dolu yolculuğu.</p>
+                    <div class="slide-buttons">
+                        <a href="#" class="btn btn-play"><i class="fas fa-play"></i> Oynat</a>
+                        <a href="#" class="btn btn-info"><i class="fas fa-info-circle"></i> Detaylar</a>
+                    </div>
+                </div>
+                <div class="slide-image">
+                    <img src="https://via.placeholder.com/1200x600/122D4F/ffffff?text=Zamanın+İzinde" alt="Zamanın İzinde">
+                </div>
+            </div>
+        </div>
+        <div class="slider-controls">
+            <button class="slider-arrow prev"><i class="fas fa-chevron-left"></i></button>
+            <div class="slider-dots"></div>
+            <button class="slider-arrow next"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </section>
+
+    <section class="categories-section">
+        <div class="container">
+            <div class="category-logos">
+                <div class="category-logo">
+                    <img src="https://via.placeholder.com/200x100/122235/ffffff?text=Maravelle+Originals" alt="Maravelle Originals">
+                </div>
+                <div class="category-logo">
+                    <img src="https://via.placeholder.com/200x100/1E3A5F/ffffff?text=Fantasy" alt="Fantasy">
+                </div>
+                <div class="category-logo">
+                    <img src="https://via.placeholder.com/200x100/0A1D3F/ffffff?text=Sci-Fi" alt="Sci-Fi">
+                </div>
+                <div class="category-logo">
+                    <img src="https://via.placeholder.com/200x100/152642/ffffff?text=Adventure" alt="Adventure">
+                </div>
+                <div class="category-logo">
+                    <img src="https://via.placeholder.com/200x100/1D3557/ffffff?text=Animation" alt="Animation">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-title">Öne Çıkanlar</h2>
+            <div class="content-slider">
+                <div class="content-grid" id="contentGrid">
+                    <!-- İçerik JavaScript ile eklenecek -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content-section">
+        <div class="container">
+            <h2 class="section-title">Yeni Eklenenler</h2>
+            <div class="content-slider">
+                <div class="content-grid" id="newContentGrid">
+                    <!-- İçerik JavaScript ile eklenecek -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ekleme/Düzenleme Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">Yeni İçerik Ekle</h2>
+            <form id="contentForm">
+                <input type="hidden" id="contentId">
+                <div class="form-group">
+                    <label for="title">Başlık:</label>
+                    <input type="text" id="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="type">Tür:</label>
+                    <select id="type" required>
+                        <option value="movie">Film</option>
+                        <option value="series">Dizi</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="year">Yıl:</label>
+                    <input type="number" id="year" min="1900" max="2099" required>
+                </div>
+                <div class="form-group">
+                    <label for="genre">Kategori:</label>
+                    <input type="text" id="genre" placeholder="Aksiyon, Komedi, Dram, vb.">
+                </div>
+                <div class="form-group">
+                    <label for="director">Yönetmen/Yapımcı:</label>
+                    <input type="text" id="director">
+                </div>
+                <div class="form-group">
+                    <label for="starring">Oyuncular:</label>
+                    <input type="text" id="starring" placeholder="Virgülle ayırın">
+                </div>
+                <div class="form-group">
+                    <label for="imageUrl">Afiş URL:</label>
+                    <input type="url" id="imageUrl" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label for="rating">Puanınız:</label>
+                    <select id="rating">
+                        <option value="">Seçiniz</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="notes">Notlar:</label>
+                    <textarea id="notes" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="submit" id="saveButton">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Detay Modal -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content detail-modal">
+            <span class="close">&times;</span>
+            <div id="qrCodeContainer" class="qr-code-container" style="display: none;">
+                <h3>QR Kod Önerisi</h3>
+                <div id="qrcode"></div>
+                <p id="qrDescription" class="qr-description"></p>
+                <button id="closeQrCode" class="btn btn-secondary">Kapat</button>
+            </div>
+            <div id="detailContent"></div>
+            <div class="detail-actions">
+                <button id="generateRecommendationQR" class="btn btn-primary"><i class="fas fa-qrcode"></i> QR Kod Önerisi Oluştur</button>
+                <button id="addToWatched" class="btn btn-secondary"><i class="fas fa-check"></i> İzlediklerime Ekle</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Giriş Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content auth-modal">
+            <span class="close" id="closeLoginModal">&times;</span>
+            <div class="auth-container">
+                <div class="auth-header">
+                    <div class="auth-tabs">
+                        <button class="auth-tab active" data-tab="login">Giriş Yap</button>
+                        <button class="auth-tab" data-tab="register">Kayıt Ol</button>
+                    </div>
+                </div>
+                
+                <div class="auth-body">
+                    <!-- Giriş Formu -->
+                    <form id="loginForm" class="auth-form active">
+                        <div class="imgcontainer">
+                            <img src="https://via.placeholder.com/150x150/304ffe/ffffff?text=M" alt="Avatar" class="avatar">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="loginEmail">E-posta</label>
+                            <input type="email" id="loginEmail" placeholder="E-posta adresiniz" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="loginPassword">Şifre</label>
+                            <input type="password" id="loginPassword" placeholder="Şifreniz" required>
+                        </div>
+                        
+                        <div class="form-group remember-me">
+                            <label>
+                                <input type="checkbox" id="rememberMe"> Beni Hatırla
+                            </label>
+                            <a href="#" class="forgot-password">Şifremi Unuttum</a>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="auth-button">Giriş Yap</button>
+                        </div>
+                        
+                        <div class="social-login">
+                            <p>veya şununla giriş yap:</p>
+                            <div class="social-buttons">
+                                <button type="button" class="social-button google"><i class="fab fa-google"></i> Google</button>
+                                <button type="button" class="social-button facebook"><i class="fab fa-facebook-f"></i> Facebook</button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <!-- Kayıt Formu -->
+                    <form id="registerForm" class="auth-form">
+                        <div class="imgcontainer">
+                            <img src="https://via.placeholder.com/150x150/673ab7/ffffff?text=M" alt="Avatar" class="avatar">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="registerName">Ad Soyad</label>
+                            <input type="text" id="registerName" placeholder="Ad ve soyadınız" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="registerEmail">E-posta</label>
+                            <input type="email" id="registerEmail" placeholder="E-posta adresiniz" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="registerPassword">Şifre</label>
+                            <input type="password" id="registerPassword" placeholder="Şifreniz" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="registerPasswordConfirm">Şifre Tekrar</label>
+                            <input type="password" id="registerPasswordConfirm" placeholder="Şifrenizi tekrar girin" required>
+                        </div>
+                        
+                        <div class="form-group terms">
+                            <label>
+                                <input type="checkbox" id="termsAgree" required> <a href="#">Kullanım Koşulları</a>'nı ve <a href="#">Gizlilik Politikası</a>'nı kabul ediyorum
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="auth-button">Kayıt Ol</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>MARAVELLE</h2>
+                    <p>Hayal Gücünüzün Ötesinde</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h3>Maravelle</h3>
+                        <ul>
+                            <li><a href="#">Hakkımızda</a></li>
+                            <li><a href="#">Kariyer</a></li>
+                            <li><a href="#">İletişim</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Yardım</h3>
+                        <ul>
+                            <li><a href="#">Hesap</a></li>
+                            <li><a href="#">Destek Merkezi</a></li>
+                            <li><a href="#">Cihaz Uyumluluğu</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Yasal</h3>
+                        <ul>
+                            <li><a href="#">Gizlilik Politikası</a></li>
+                            <li><a href="#">Kullanım Koşulları</a></li>
+                            <li><a href="#">Çerezler</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 Maravelle. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="db.js"></script>
+    <script src="app.js"></script>
+    
+    <!-- Hata ayıklama için debug scripti -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("DEBUG: Sayfa yüklendi");
+            
+            // Giriş yap butonu ve modalını kontrol et
+            const loginBtn = document.getElementById('loginBtn');
+            const loginModal = document.getElementById('loginModal');
+            
+            if (loginBtn) {
+                console.log("DEBUG: Giriş yap butonu bulundu:", loginBtn);
+                // Direkt olarak burada bir click event ekleyelim
+                loginBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log("DEBUG: Giriş yap butonuna tıklandı");
+                    if (loginModal) {
+                        console.log("DEBUG: Login modal açılıyor");
+                        loginModal.style.display = 'block';
+                    } else {v
+                        console.error("DEBUG: Login modal bulunamadı!");
+                    }
+                });
+            } else {
+                console.error("DEBUG: Giriş yap butonu bulunamadı!");
+            }
+            
+            // Dark mode butonu kontrolü
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            if (darkModeToggle) {
+                console.log("DEBUG: Dark mode butonu bulundu:", darkModeToggle);
+                // Direkt olarak dark mode toggle için click olayı ekle
+                darkModeToggle.addEventListener('click', function() {
+                    console.log("DEBUG: Dark mode butonuna tıklandı");
+                    const currentTheme = document.documentElement.getAttribute('data-theme');
+                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                    
+                    console.log("DEBUG: Tema değiştiriliyor:", currentTheme, "->", newTheme);
+                    document.documentElement.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('theme', newTheme);
+                    
+                    // İkonu güncelle
+                    if (newTheme === 'dark') {
+                        this.innerHTML = '<i class="fas fa-moon"></i>';
+                    } else {
+                        this.innerHTML = '<i class="fas fa-sun"></i>';
+                    }
+                });
+            } else {
+                console.error("DEBUG: Dark mode butonu bulunamadı!");
+            }
+            
+            // Giriş modalını da kontrol et
+            if (loginModal) {
+                console.log("DEBUG: Login modal bulundu:", loginModal);
+                
+                // Modal kapatma butonu
+                const closeBtn = document.getElementById('closeLoginModal');
+                if (closeBtn) {
+                    console.log("DEBUG: Modal kapatma butonu bulundu");
+                    closeBtn.addEventListener('click', function() {
+                        console.log("DEBUG: Modal kapatılıyor");
+                        loginModal.style.display = 'none';
+                    });
+                }
+                
+                // Modal dışına tıklandığında kapat
+                window.addEventListener('click', function(event) {
+                    if (event.target === loginModal) {
+                        console.log("DEBUG: Modal dışına tıklandı, kapatılıyor");
+                        loginModal.style.display = 'none';
+                    }
+                });
+            } else {
+                console.error("DEBUG: Login modal bulunamadı!");
+            }
+        });
+    </script>
+</body>
+</html> 
