@@ -1,3 +1,4 @@
+![Uploading Ekran Resmi 2026-05-27 17.01.16.png…]()
 Film ve Dizi Arşivi
 Bu proje, kişisel film ve dizi arşivinizi yönetmenize olanak tanıyan bir web uygulamasıdır. HTML, CSS, JavaScript ve IndexedDB kullanılarak geliştirilmiştir.
 
